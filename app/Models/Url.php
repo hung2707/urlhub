@@ -111,6 +111,13 @@ class Url extends Model
         );
     }
 
+    protected function regions(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attr) => $this->codeOfRegions($attr['id']),
+        );
+    }
+
     protected function uniqueClicks(): Attribute
     {
         return Attribute::make(
@@ -219,5 +226,19 @@ class Url extends Model
     public function totalClick(): int
     {
         return Visit::count();
+    }
+
+    public function codeOfRegions(int $urlId)
+    {
+        /** @var self */
+        $self = self::find($urlId);
+
+        $visitor_region = $self->visits()
+            ->whereIsFirstClick(true)
+            ->pluck('visitor_region')->toArray();
+
+        $visitor_region = array_filter($visitor_region, fn($value) => !is_null($value) && $value !== '');
+
+        return array_count_values($visitor_region);
     }
 }

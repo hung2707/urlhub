@@ -25,6 +25,7 @@ class Visit extends Model
         'visitor_id',
         'is_first_click',
         'referer',
+        'visitor_region'
     ];
 
     /**

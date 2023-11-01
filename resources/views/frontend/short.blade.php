@@ -68,5 +68,13 @@
                 </div>
             </div>
         </div>
+        @auth
+            @if (auth()->user()->hasRole('admin') || (auth()->user()->id === $url->user_id))
+                <div class="common-card-style mt-6 sm:mt-3 px-4 py-5 sm:p-6">
+                    <h2 class="mb-3">LOCATION</h2>
+                    <div id="regions_div" style="width: 100%; height: 500px;"></div>
+                </div>
+            @endif
+        @endauth
     </div>
 @endsection

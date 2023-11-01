@@ -21,6 +21,11 @@ class VisitorService
      */
     public function create(Url $url)
     {
+        $visitorIpLookup = json_decode($this->visitorIpLookup());
+        $visitorRegionCode = "";
+        if(isset($visitorIpLookup)){
+            $visitorRegionCode = $visitorIpLookup->location->country->code;
+        }
         $logBotVisit = config('urlhub.track_bot_visits');
         if ($logBotVisit === false && \Browser::isBot() === true) {
             return;
@@ -31,6 +36,7 @@ class VisitorService
             'visitor_id'     => $this->user->signature(),
             'is_first_click' => $this->isFirstClick($url),
             'referer'        => request()->header('referer'),
+            'visitor_region' => $visitorRegionCode
         ]);
     }
 
@@ -47,5 +53,26 @@ class VisitorService
             ->exists();
 
         return $hasVisited ? false : true;
+    }
+
+    public function visitorIpLookup() {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.ipregistry.co/?key=mk3v2qoiob7ba95h',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        
+        return $response;
     }
 }
