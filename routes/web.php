@@ -11,13 +11,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'frontend.homepage')->name('home');
 Route::post('/shorten', [UrlController::class, 'create'])->name('su_create');
-Route::get('/+{url:keyword}', [UrlController::class, 'showDetail'])->name('su_detail');
-Route::get('/delete/{url:keyword}', [UrlController::class, 'delete'])->name('su_delete');
+// Route::get('/delete/{url:keyword}', [UrlController::class, 'delete'])->name('su_delete');
 
 Route::namespace('Dashboard')->prefix('admin')->group(function () {
     Route::middleware('auth')->group(function () {
         // Dashboard (My URLs)
         Route::get('/', [DashboardController::class, 'view'])->name('dashboard');
+        Route::get('/detail/{url:keyword}', [UrlController::class, 'showDetail'])->name('su_detail');
         Route::get('/delete/{url:keyword}', [DashboardController::class, 'delete'])->name('dashboard.su_delete');
         Route::get('/edit/{url:keyword}', [DashboardController::class, 'edit'])->name('dashboard.su_edit');
         Route::post('/edit/{url:keyword}', [DashboardController::class, 'update'])->name('dashboard.su_edit.post');
